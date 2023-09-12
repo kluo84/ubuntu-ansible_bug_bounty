@@ -10,7 +10,7 @@
 
 - name: Install pipx tools from local directory
   command:
-    cmd: "pipx install /tmp/{{ item.name }}"
+    cmd: "pipx install --force /tmp/{{ item.name }}"
   loop:
     - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
     - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
