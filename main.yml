@@ -8,7 +8,7 @@
     - role: "roles/configure-tmux"
     - role: "roles/customize-terminal"
     - role: "roles/customize-browser"
-    - role: "roles/configure-logging"
+    #- role: "roles/configure-logging"
     - role: "roles/configure-postman"
     - role: "roles/configure-zap"
     - role: "roles/customize-burp"
