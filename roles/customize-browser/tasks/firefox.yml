@@ -45,12 +45,11 @@
 
 - name: Copy extensions to Firefox profile
   copy:
-    src: "/tmp/{{ item.name }}.xpi"
-    dest: "{{ profile_dir.stdout }}/extensions/{{ item.name }}.xpi"
+    src: "/tmp/{{ item[1] }}.xpi"
+    dest: "{{ item[0].stdout }}/extensions/{{ item[1] }}.xpi"
   with_nested:
     - "{{ profiles_directory.results }}"
     - "{{ FirefoxPlugins }}"
-  loop_control:
-    loop_var: profile_dir
+
 
 
