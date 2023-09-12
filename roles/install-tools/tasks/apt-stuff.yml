@@ -20,6 +20,7 @@
       - libpcap-dev
       - default-jre
       - python3.9-full
+      - python3-venv
       - git
       - python3-pip
     state: latest
