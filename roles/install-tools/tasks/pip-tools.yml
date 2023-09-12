@@ -1,0 +1,5 @@
+---
+- name: Ensure psutil is installed
+  pip:
+    name: psutil
+    executable: pip3
