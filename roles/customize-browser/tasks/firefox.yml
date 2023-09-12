@@ -1,26 +1,17 @@
 ---
-# - name: "Updating Firefox Policies"
-#   template: 
-#     src: "templates/policies.json.j2"
-#     dest: "/usr/share/firefox-esr/distribution/policies.json"
-#   become: true
-#   become_method: sudo
-
 - name: Ensure Firefox is installed
   apt:
     name: firefox
     state: present
   become: true
   become_method: sudo
-# Assuming you've already fetched the necessary extensions in .xpi format and placed them somewhere accessible.
-# Here, I'm just giving a generic path. Adjust as necessary.
+
 - name: Fetch extensions
   get_url:
     url: "https://addons.mozilla.org/firefox/downloads/latest/{{ item }}/latest.xpi"
     dest: "/tmp/{{ item }}.xpi"
   loop: "{{ FirefoxPlugins }}"
 
-# Create Firefox profiles. Adjust the command to properly create profiles as you need them.
 - name: Create Firefox profiles
   command: "firefox -CreateProfile {{ item }}"
   loop:
@@ -29,36 +20,13 @@
     - high_user1
     - high_user2
 
-- name: Copy get_profile_dir.py to target
-  copy:
-    src: "files/get_profile_dir.py"
-    dest: "/tmp/get_profile_dir.py"
-    mode: '0755'
+- name: Create policies.json for Firefox
+  template:
+    src: "policies.json.j2"
+    dest: "/usr/lib/firefox/distribution/policies.json"
+  become: true
+  become_method: sudo
 
-- name: Get Firefox profile directory for each profile
-  command:
-    cmd: "python3 /tmp/get_profile_dir.py {{ profile_name }}"
-  register: profiles_directory
-  loop: "{{ firefox_profiles }}"
-  loop_control:
-    loop_var: profile_name
-
-- name: Ensure extensions directory exists in Firefox profile
-  file:
-    path: "{{ item[0].stdout }}/extensions"
-    state: directory
-    mode: '0755'
-  with_nested:
-    - "{{ profiles_directory.results }}"
-    - "{{ FirefoxPlugins }}"
-
-- name: Copy extensions to Firefox profile
-  copy:
-    src: "/tmp/{{ item[1] }}.xpi"
-    dest: "{{ item[0].stdout }}/extensions/{{ item[1] }}.xpi"
-  with_nested:
-    - "{{ profiles_directory.results }}"
-    - "{{ FirefoxPlugins }}"
 
 
 
