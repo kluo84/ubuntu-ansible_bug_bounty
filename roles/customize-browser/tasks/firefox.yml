@@ -1,7 +1,51 @@
-- name: "Updating Firefox Policies"
-  template: 
-    src: "templates/policies.json.j2"
-    dest: "/usr/share/firefox-esr/distribution/policies.json"
-  become: true
-  become_method: sudo
+---
+# - name: "Updating Firefox Policies"
+#   template: 
+#     src: "templates/policies.json.j2"
+#     dest: "/usr/share/firefox-esr/distribution/policies.json"
+#   become: true
+#   become_method: sudo
+
+- name: Ensure Firefox is installed
+  apt:
+    name: firefox
+    state: present
+
+# Assuming you've already fetched the necessary extensions in .xpi format and placed them somewhere accessible.
+# Here, I'm just giving a generic path. Adjust as necessary.
+- name: Fetch extensions
+  get_url:
+    url: "https://addons.mozilla.org/firefox/downloads/latest/{{ item }}/latest.xpi"
+    dest: "/tmp/{{ item }}.xpi"
+  loop: "{{ FirefoxPlugins }}"
+
+# Create Firefox profiles. Adjust the command to properly create profiles as you need them.
+- name: Create Firefox profiles
+  command: "firefox -CreateProfile {{ item }}"
+  loop:
+    - low_user1
+    - low_user2
+    - high_user1
+    - high_user2
+
+# Install extensions for each profile. This is a naive approach and might need adjustments.
+- name: Install extensions for each profile
+  command: "firefox -P {{ item.profile }} -install-global-extension /tmp/{{ item.extension }}.xpi"
+  loop:
+    - { profile: 'low_user1', extension: 'darkreader' }
+    - { profile: 'low_user1', extension: 'foxyproxy-standard' }
+    - { profile: 'low_user1', extension: 'wappalyzer' }
+    - { profile: 'low_user1', extension: 'trufflehog' }
+    - { profile: 'low_user2', extension: 'darkreader' }
+    - { profile: 'low_user2', extension: 'foxyproxy-standard' }
+    - { profile: 'low_user2', extension: 'wappalyzer' }
+    - { profile: 'low_user2', extension: 'trufflehog' }
+    - { profile: 'high_user1', extension: 'darkreader' }
+    - { profile: 'high_user1', extension: 'foxyproxy-standard' }
+    - { profile: 'high_user1', extension: 'wappalyzer' }
+    - { profile: 'high_user1', extension: 'trufflehog' }
+    - { profile: 'high_user2', extension: 'darkreader' }
+    - { profile: 'high_user2', extension: 'foxyproxy-standard' }
+    - { profile: 'high_user2', extension: 'wappalyzer' }
+    - { profile: 'high_user2', extension: 'trufflehog' }
 
