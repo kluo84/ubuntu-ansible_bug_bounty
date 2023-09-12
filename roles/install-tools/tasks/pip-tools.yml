@@ -1,5 +1,7 @@
 ---
-- name: Ensure psutil is installed
+- name: pip installing
   pip:
-    name: psutil
+    name:
+      - psutil
+      - configparser
     executable: pip3

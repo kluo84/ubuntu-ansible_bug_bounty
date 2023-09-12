@@ -4,3 +4,13 @@ FirefoxPlugins:
   - "foxyproxy-standard"
   - "wappalyzer"
   - "trufflehog"
+
+
+  firefox_profiles:
+  - LowUser1
+  - LowUser2
+  - HighUser1
+  - HighUser2
+
+extensions_path_on_control_node: "/tmp/*.xpi"
+

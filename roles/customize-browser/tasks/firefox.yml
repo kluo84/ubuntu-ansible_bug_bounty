@@ -10,7 +10,8 @@
   apt:
     name: firefox
     state: present
-
+  become: true
+  become_method: sudo
 # Assuming you've already fetched the necessary extensions in .xpi format and placed them somewhere accessible.
 # Here, I'm just giving a generic path. Adjust as necessary.
 - name: Fetch extensions
@@ -28,24 +29,28 @@
     - high_user1
     - high_user2
 
-# Install extensions for each profile. This is a naive approach and might need adjustments.
-- name: Install extensions for each profile
-  command: "firefox -P {{ item.profile }} -install-global-extension /tmp/{{ item.extension }}.xpi"
-  loop:
-    - { profile: 'low_user1', extension: 'darkreader' }
-    - { profile: 'low_user1', extension: 'foxyproxy-standard' }
-    - { profile: 'low_user1', extension: 'wappalyzer' }
-    - { profile: 'low_user1', extension: 'trufflehog' }
-    - { profile: 'low_user2', extension: 'darkreader' }
-    - { profile: 'low_user2', extension: 'foxyproxy-standard' }
-    - { profile: 'low_user2', extension: 'wappalyzer' }
-    - { profile: 'low_user2', extension: 'trufflehog' }
-    - { profile: 'high_user1', extension: 'darkreader' }
-    - { profile: 'high_user1', extension: 'foxyproxy-standard' }
-    - { profile: 'high_user1', extension: 'wappalyzer' }
-    - { profile: 'high_user1', extension: 'trufflehog' }
-    - { profile: 'high_user2', extension: 'darkreader' }
-    - { profile: 'high_user2', extension: 'foxyproxy-standard' }
-    - { profile: 'high_user2', extension: 'wappalyzer' }
-    - { profile: 'high_user2', extension: 'trufflehog' }
+- name: Copy get_profile_dir.py to target
+  copy:
+    src: "files/get_profile_dir.py"
+    dest: "/tmp/get_profile_dir.py"
+    mode: '0755'
+
+- name: Get Firefox profile directory for each profile
+  command:
+    cmd: "python3 /tmp/get_profile_dir.py {{ item }}"
+  register: profiles_directory
+  with_items: "{{ firefox_profiles }}"
+  loop_control:
+    loop_var: profile_name
+
+- name: Copy extensions to Firefox profile
+  copy:
+    src: "/tmp/{{ item.name }}.xpi"
+    dest: "{{ profile_dir.stdout }}/extensions/{{ item.name }}.xpi"
+  with_nested:
+    - "{{ profiles_directory.results }}"
+    - "{{ FirefoxPlugins }}"
+  loop_control:
+    loop_var: profile_dir
+
 
