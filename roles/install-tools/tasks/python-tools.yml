@@ -1,4 +1,13 @@
 ---
+
+- name: Ensure pipx source directories are absent
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items:
+    - { name: 'impacket', path: '/tmp/impacket' }
+    - { name: 'crackmapexec', path: '/tmp/crackmapexec' }
+
 - name: Clone git repositories
   git:
     repo: "{{ item.url }}"
@@ -14,3 +23,6 @@
   loop:
     - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
     - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
+
+
+
