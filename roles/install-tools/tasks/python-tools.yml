@@ -1,40 +1,10 @@
 ---
-- name: Clone repositories to temporary directory
-  git:
-    repo: "{{ item.url }}"
-    dest: "/tmp/{{ item.name }}"
-    clone: yes
-    update: yes
+- name: "Install pipx tools"
+  community.general.pipx:
+    name: "{{ item.name }}"
+    source: "{{ item.url }}"
+    state: latest
   loop:
-    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
-    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
-
-- name: Install packages using pip in editable mode
-  command:
-    cmd: "pip install --editable /tmp/{{ item.name }}"
-  loop:
-    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
-  ignore_errors: yes
-  register: pip_editable_result
-
-- name: Install packages using pip normally for those that failed editable mode
-  command:
-    cmd: "pip install /tmp/{{ item.name }}"
-  when: "'{{ item.name }}' in pip_editable_result.failed_item_names"
-  loop:
-    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
-
-- name: Link binaries using pipx
-  command:
-    cmd: "pipx inject {{ item.name }} {{ item.name }}"
-  loop:
-    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
-    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
-
-- name: Cleanup temporary directories
-  file:
-    path: "/tmp/{{ item.name }}"
-    state: absent
-  loop:
-    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
-    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
+    - { name: 'impacket', url: 'git+https://github.com/fortra/impacket.git' }
+    - { name: 'crackmapexec', url: 'git+https://github.com/Porchetta-Industries/CrackMapExec.git' }
+    - { name: 'certipy-ad', url: 'git+https://github.com/ly4k/Certipy.git' }
