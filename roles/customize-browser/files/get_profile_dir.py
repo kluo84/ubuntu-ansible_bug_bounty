@@ -2,12 +2,13 @@ import os
 import configparser
 
 def get_profile_dir(profile_name):
+    base_path = os.path.expanduser('~/.mozilla/firefox/')
     config = configparser.ConfigParser()
-    config.read(os.path.expanduser('~/.mozilla/firefox/profiles.ini'))
+    config.read(os.path.join(base_path, 'profiles.ini'))
     
     for section in config.sections():
         if config.has_option(section, 'Name') and config.get(section, 'Name') == profile_name:
-            return config.get(section, 'Path')
+            return os.path.join(base_path, config.get(section, 'Path'))
     return None
 
 if __name__ == "__main__":
