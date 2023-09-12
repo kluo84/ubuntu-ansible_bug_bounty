@@ -6,9 +6,7 @@ FirefoxPlugins:
   - "trufflehog"
 
 firefox_profiles:
-  - LowUser1
-  - LowUser2
-  - HighUser1
-  - HighUser2
-
-
+  - low_user1
+  - low_user2
+  - high_user1
+  - high_user2

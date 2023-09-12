@@ -37,9 +37,9 @@
 
 - name: Get Firefox profile directory for each profile
   command:
-    cmd: "python3 /tmp/get_profile_dir.py {{ item }}"
+    cmd: "python3 /tmp/get_profile_dir.py {{ profile_name }}"
   register: profiles_directory
-  with_items: "{{ firefox_profiles }}"
+  loop: "{{ firefox_profiles }}"
   loop_control:
     loop_var: profile_name
 
