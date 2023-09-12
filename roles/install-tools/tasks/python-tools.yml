@@ -1,11 +1,26 @@
 ---
 
-- name: Ensure pipx packages are installed from GitHub repositories
-  command:
-    cmd: "pipx install --force git+{{ item.url }}#egg={{ item.name }}"
+- name: Clone repositories to temporary directory
+  git:
+    repo: "{{ item.url }}"
+    dest: "/tmp/{{ item.name }}"
+    clone: yes
+    update: yes
   loop:
     - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
     - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
 
+- name: Ensure pipx packages are installed from local repositories
+  command:
+    cmd: "pipx install --force /tmp/{{ item.name }}"
+  loop:
+    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
+    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
 
-
+- name: Cleanup temporary directories
+  file:
+    path: "/tmp/{{ item.name }}"
+    state: absent
+  loop:
+    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
+    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
