@@ -1,5 +1,4 @@
 ---
-
 - name: Clone repositories to temporary directory
   git:
     repo: "{{ item.url }}"
@@ -15,6 +14,14 @@
     cmd: "pip install --editable /tmp/{{ item.name }}"
   loop:
     - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
+  ignore_errors: yes
+  register: pip_editable_result
+
+- name: Install packages using pip normally for those that failed editable mode
+  command:
+    cmd: "pip install /tmp/{{ item.name }}"
+  when: "'{{ item.name }}' in pip_editable_result.failed_item_names"
+  loop:
     - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
 
 - name: Link binaries using pipx
