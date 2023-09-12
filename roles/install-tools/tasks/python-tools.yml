@@ -10,9 +10,16 @@
     - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
     - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
 
-- name: Ensure pipx packages are installed from local repositories
+- name: Install packages using pip in editable mode
   command:
-    cmd: "pipx install --force /tmp/{{ item.name }}"
+    cmd: "pip install --editable /tmp/{{ item.name }}"
+  loop:
+    - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
+    - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
+
+- name: Link binaries using pipx
+  command:
+    cmd: "pipx inject {{ item.name }} {{ item.name }}"
   loop:
     - { name: 'impacket', url: 'https://github.com/fortra/impacket.git' }
     - { name: 'crackmapexec', url: 'https://github.com/Porchetta-Industries/CrackMapExec.git' }
