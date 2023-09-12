@@ -43,6 +43,15 @@
   loop_control:
     loop_var: profile_name
 
+- name: Ensure extensions directory exists in Firefox profile
+  file:
+    path: "{{ item[0].stdout }}/extensions"
+    state: directory
+    mode: '0755'
+  with_nested:
+    - "{{ profiles_directory.results }}"
+    - "{{ FirefoxPlugins }}"
+
 - name: Copy extensions to Firefox profile
   copy:
     src: "/tmp/{{ item[1] }}.xpi"
