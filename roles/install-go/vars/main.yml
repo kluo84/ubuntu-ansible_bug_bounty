@@ -1,0 +1,18 @@
+---
+# vars file for install-tools
+go_repositories:
+  - "github.com/projectdiscovery/subfinder/v2/cmd/subfinder@latest"
+  - "github.com/tomnomnom/assetfinder@latest"
+  - "github.com/OWASP/Amass/v3/...@master"
+  - "github.com/tomnomnom/anew@latest"
+  - "github.com/projectdiscovery/httpx/cmd/httpx@latest"
+  - "github.com/projectdiscovery/katana/cmd/katana@latest"
+  - "github.com/tomnomnom/gf@latest"
+  - "github.com/lc/gau/v2/cmd/gau@latest"
+  - "github.com/tomnomnom/qsreplace@latest"
+  - "github.com/ThreatUnkown/jsubfinder@latest"
+  - "github.com/hahwul/dalfox/v2@latest"
+  - "github.com/ffuf/ffuf@latest"
+  - "github.com/projectdiscovery/naabu/v2/cmd/naabu@latest"
+  - "github.com/projectdiscovery/nuclei/v2/cmd/nuclei@latest"
+  - "github.com/xm1k3/cent@latest"

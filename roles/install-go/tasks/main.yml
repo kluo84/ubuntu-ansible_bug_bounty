@@ -1,0 +1,47 @@
+---
+- name: Capture current user
+  command: whoami
+  register: current_user
+  become: false
+
+- name: Set GOPATH for current user
+  set_fact:
+    user_gopath: "/home/{{ current_user.stdout }}/go"
+
+- name: Check if Go is already installed in /usr/local/go
+  stat:
+    path: "{{ go_install_dir }}/go"
+  register: go_check
+
+- name: Download Go if not installed
+  ansible.builtin.get_url:
+    url: "{{ go_tarball_url }}"
+    dest: "{{ go_tarball_dest }}"
+  when: not go_check.stat.exists
+
+- name: Extract and install Go if not installed
+  unarchive:
+    src: "{{ go_tarball_dest }}"
+    dest: "{{ go_install_dir }}"
+    remote_src: true
+  when: not go_check.stat.exists
+  become: true
+  become_method: sudo
+
+# - name: Add GOBIN to PATH in .bashrc
+#   lineinfile:
+#     path: "/home/{{ current_user.stdout }}/.bashrc"
+#     line: 'export PATH=$PATH:{{ go_bin_dir }}:{{ user_gopath }}/bin'
+#     state: present
+
+- name: Install Go Repositories
+  command:
+    cmd: "go install -v {{ item }}"
+  environment:
+    PATH: "{{ ansible_env.PATH}}:{{ go_bin_dir}}"
+    GOPATH: "{{ user_gopath }}"
+    GOBIN: "{{ user_gopath }}/bin"
+    GO111MODULE: "on"
+  loop: "{{ go_repositories }}"
+  become: false
+  ignore_errors: true
